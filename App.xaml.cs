@@ -40,8 +40,12 @@ public partial class App : System.Windows.Application
 
         _mainWindow = new MainWindow();
 
+        // API 키가 있으면 항상 시작 상태로 실행
         if (!string.IsNullOrWhiteSpace(Settings.AnthropicAPIKey))
+        {
             WatcherSvc.Start();
+            _mainWindow.UpdateStatus();
+        }
     }
 
     private void OnTrayClick(object? sender, RoutedEventArgs e)
@@ -87,14 +91,21 @@ public partial class App : System.Windows.Application
 
     private Icon CreateTrayIcon()
     {
-        var bmp = new Bitmap(32, 32);
+        // 256px로 그린 뒤 아이콘으로 변환 — 고해상도 트레이에서도 선명하게
+        var bmp = new Bitmap(256, 256);
         using var g = Graphics.FromImage(bmp);
         g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+        g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
         g.Clear(Color.Transparent);
-        g.FillRectangle(new SolidBrush(Color.FromArgb(0, 122, 255)), 0, 0, 32, 32);
-        using var font = new Font("Segoe UI", 17, System.Drawing.FontStyle.Bold, GraphicsUnit.Pixel);
+
+        // Windows 11 트레이 아이콘: 흰색 N, 배경 없음
+        using var font = new Font("Segoe UI", 196, System.Drawing.FontStyle.Bold, GraphicsUnit.Pixel);
         var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-        g.DrawString("R", font, Brushes.White, new RectangleF(0, 0, 32, 32), sf);
+        // 그림자 효과로 입체감 (어두운 배경에서도 보이도록)
+        g.DrawString("N", font, new SolidBrush(Color.FromArgb(60, 0, 0, 0)),
+            new RectangleF(4, 4, 256, 256), sf);
+        g.DrawString("N", font, Brushes.White, new RectangleF(0, 0, 256, 256), sf);
+
         return Icon.FromHandle(bmp.GetHicon());
     }
 }

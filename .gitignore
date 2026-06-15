@@ -1,4 +1,15 @@
+# Build output
 bin/
 obj/
+
+# Visual Studio
 *.user
+*.suo
 .vs/
+
+# 앱 데이터 (런타임 생성)
+*.log
+
+# OS
+Thumbs.db
+desktop.ini

@@ -7,7 +7,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>Renamer</AssemblyName>
     <RootNamespace>Renamer</RootNamespace>
+    <ApplicationIcon>Renamer_Icon.ico</ApplicationIcon>
   </PropertyGroup>
+  <ItemGroup>
+    <Resource Include="Font_Pretendard\*.otf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Renamer_Icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Renamer_Icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
     <PackageReference Include="PdfPig" Version="0.1.9" />

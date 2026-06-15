@@ -4,6 +4,9 @@
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <ResourceDictionary>
+            <!-- Font -->
+            <FontFamily x:Key="AppFont">/Renamer;component/Font_Pretendard/#Pretendard</FontFamily>
+
             <!-- Colors -->
             <Color x:Key="Blue">#007AFF</Color>
             <Color x:Key="Green">#34C759</Color>
@@ -28,7 +31,7 @@
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="Padding" Value="12,6" />
                 <Setter Property="FontSize" Value="13" />
-                <Setter Property="FontFamily" Value="Segoe UI" />
+                <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
                 <Setter Property="Cursor" Value="Hand" />
                 <Setter Property="Template">
                     <Setter.Value>
@@ -83,28 +86,29 @@
                 </Setter>
             </Style>
 
-            <!-- Toggle button style -->
+            <!-- Toggle button style — minimal, flat -->
             <Style x:Key="ToggleStyle" TargetType="ToggleButton">
-                <Setter Property="Width" Value="44" />
+                <Setter Property="Width" Value="42" />
                 <Setter Property="Height" Value="24" />
                 <Setter Property="Cursor" Value="Hand" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ToggleButton">
                             <Grid>
-                                <Border x:Name="Track" CornerRadius="12" Background="{StaticResource SeparatorBrush}" />
-                                <Ellipse x:Name="Thumb" Width="20" Height="20" Fill="White" Margin="2,2,0,2"
-                                         HorizontalAlignment="Left">
+                                <Border x:Name="Track" CornerRadius="12" Background="#D1D1D6" />
+                                <Ellipse x:Name="Thumb" Width="18" Height="18" Fill="White"
+                                         HorizontalAlignment="Left" Margin="3,0,0,0">
                                     <Ellipse.Effect>
-                                        <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.3" Direction="270" />
+                                        <DropShadowEffect BlurRadius="3" ShadowDepth="1"
+                                                          Opacity="0.18" Direction="270" Color="Black" />
                                     </Ellipse.Effect>
                                 </Ellipse>
                             </Grid>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsChecked" Value="True">
-                                    <Setter TargetName="Track" Property="Background" Value="{StaticResource GreenBrush}" />
+                                    <Setter TargetName="Track" Property="Background" Value="{StaticResource BlueBrush}" />
                                     <Setter TargetName="Thumb" Property="HorizontalAlignment" Value="Right" />
-                                    <Setter TargetName="Thumb" Property="Margin" Value="0,2,2,2" />
+                                    <Setter TargetName="Thumb" Property="Margin" Value="0,0,3,0" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -112,9 +116,107 @@
                 </Setter>
             </Style>
 
+            <!-- Modern ComboBox style -->
+            <Style x:Key="ModernComboBox" TargetType="ComboBox">
+                <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="Foreground" Value="#1C1C1E" />
+                <Setter Property="Background" Value="White" />
+                <Setter Property="BorderBrush" Value="#E5E5EA" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ComboBox">
+                            <Grid>
+                                <!-- Toggle button IS the visible control — no separate overlay -->
+                                <ToggleButton x:Name="ToggleBtn"
+                                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
+                                              RelativeSource={RelativeSource TemplatedParent}}"
+                                              Focusable="False">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border x:Name="Bd" Background="White"
+                                                    BorderBrush="#E5E5EA" BorderThickness="1"
+                                                    CornerRadius="8">
+                                                <Grid Margin="10,7,8,7">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <ContentPresenter x:Name="Content" Grid.Column="0"
+                                                        Content="{Binding SelectionBoxItem,
+                                                        RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                        ContentTemplate="{Binding SelectionBoxItemTemplate,
+                                                        RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                        VerticalAlignment="Center" />
+                                                    <TextBlock Grid.Column="1" Text="▾" FontSize="11"
+                                                               Foreground="#8E8E93" VerticalAlignment="Center"
+                                                               Margin="6,0,0,0" />
+                                                </Grid>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#C7C7CC" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                                <Popup x:Name="PART_Popup"
+                                       IsOpen="{TemplateBinding IsDropDownOpen}"
+                                       AllowsTransparency="True" Focusable="False"
+                                       PlacementTarget="{Binding ElementName=ToggleBtn}"
+                                       Placement="Bottom" PopupAnimation="Fade"
+                                       StaysOpen="False">
+                                    <Border Background="White" CornerRadius="8"
+                                            BorderBrush="#E5E5EA" BorderThickness="1"
+                                            Margin="0,4,0,0"
+                                            MinWidth="{Binding ActualWidth, ElementName=ToggleBtn}">
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="14" ShadowDepth="3"
+                                                              Opacity="0.12" Direction="270" />
+                                        </Border.Effect>
+                                        <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                                            <ItemsPresenter />
+                                        </ScrollViewer>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ItemContainerStyle">
+                    <Setter.Value>
+                        <Style TargetType="ComboBoxItem">
+                            <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
+                            <Setter Property="FontSize" Value="13" />
+                            <Setter Property="Foreground" Value="#1C1C1E" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ComboBoxItem">
+                                        <Border x:Name="Bd" Background="Transparent" Padding="10,7">
+                                            <ContentPresenter />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#F2F2F7" />
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#EAF2FF" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <!-- TextBox style -->
             <Style x:Key="InputBox" TargetType="TextBox">
-                <Setter Property="FontFamily" Value="Segoe UI" />
+                <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
                 <Setter Property="FontSize" Value="13" />
                 <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
                 <Setter Property="Background" Value="White" />
@@ -142,7 +244,7 @@
 
             <!-- PasswordBox style -->
             <Style x:Key="InputPasswordBox" TargetType="PasswordBox">
-                <Setter Property="FontFamily" Value="Segoe UI" />
+                <Setter Property="FontFamily" Value="{StaticResource AppFont}" />
                 <Setter Property="FontSize" Value="13" />
                 <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
                 <Setter Property="Background" Value="White" />
