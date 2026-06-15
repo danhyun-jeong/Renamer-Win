@@ -1,0 +1,168 @@
+<Window x:Class="Renamer.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Renamer 설정"
+        Width="420"
+        SizeToContent="Height"
+        WindowStyle="SingleBorderWindow"
+        ResizeMode="NoResize"
+        ShowInTaskbar="True"
+        WindowStartupLocation="CenterScreen"
+        Background="#F2F2F7">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="20,20,20,24" Width="380">
+
+            <!-- API Key Section -->
+            <TextBlock Text="Claude API Key" FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold"
+                       Foreground="#8E8E93" Margin="4,0,0,6" />
+            <Border Background="White" CornerRadius="10" Padding="14,12" Margin="0,0,0,8">
+                <StackPanel>
+                    <PasswordBox x:Name="ApiKeyBox" Style="{StaticResource InputPasswordBox}"
+                                 FontSize="13" Margin="0,0,0,8" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock x:Name="ApiKeyStatus" FontFamily="Segoe UI" FontSize="12"
+                                   VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <Button x:Name="ValidateBtn" Style="{StaticResource PrimaryButton}"
+                                Content="검증 및 저장" Padding="14,7" Click="ValidateBtn_Click" />
+                    </StackPanel>
+                    <TextBlock FontFamily="Segoe UI" FontSize="11" Foreground="#8E8E93" Margin="0,8,0,0"
+                               Text="API 키는 platform.anthropic.com에서 발급받을 수 있습니다." />
+                </StackPanel>
+            </Border>
+
+            <!-- Model Section -->
+            <TextBlock Text="모델" FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold"
+                       Foreground="#8E8E93" Margin="4,8,0,6" />
+            <Border Background="White" CornerRadius="10" Padding="14,4" Margin="0,0,0,8">
+                <StackPanel>
+                    <RadioButton x:Name="HaikuRadio" GroupName="Model"
+                                 Margin="0,8,0,6" Cursor="Hand">
+                        <StackPanel>
+                            <TextBlock Text="Claude Haiku 4.5" FontFamily="Segoe UI" FontSize="13"
+                                       Foreground="#1C1C1E" />
+                            <TextBlock Text="빠르고 저렴 ($1.00 / $5.00 per 1M tokens)"
+                                       FontFamily="Segoe UI" FontSize="11" Foreground="#8E8E93" />
+                        </StackPanel>
+                    </RadioButton>
+                    <Rectangle Height="1" Fill="#E5E5EA" Margin="20,0,0,0" />
+                    <RadioButton x:Name="SonnetRadio" GroupName="Model"
+                                 Margin="0,6,0,8" Cursor="Hand">
+                        <StackPanel>
+                            <TextBlock Text="Claude Sonnet 4.6" FontFamily="Segoe UI" FontSize="13"
+                                       Foreground="#1C1C1E" />
+                            <TextBlock Text="3배 비용, 더 높은 정확도 ($3.00 / $15.00 per 1M tokens)"
+                                       FontFamily="Segoe UI" FontSize="11" Foreground="#8E8E93" />
+                        </StackPanel>
+                    </RadioButton>
+                </StackPanel>
+            </Border>
+
+            <!-- Processing Targets -->
+            <TextBlock Text="적용 대상" FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold"
+                       Foreground="#8E8E93" Margin="4,8,0,6" />
+            <Border Background="White" CornerRadius="10" Padding="14,4" Margin="0,0,0,8">
+                <StackPanel>
+                    <Grid Margin="0,10,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="PDF 분석" FontFamily="Segoe UI" FontSize="13" Foreground="#1C1C1E" />
+                            <TextBlock Text="학술 논문 PDF 파일 이름 자동 변경" FontFamily="Segoe UI" FontSize="11" Foreground="#8E8E93" />
+                        </StackPanel>
+                        <ToggleButton x:Name="PdfToggle" Grid.Column="1" Style="{StaticResource ToggleStyle}"
+                                      VerticalAlignment="Center" Click="Target_Changed" />
+                    </Grid>
+                    <Rectangle Height="1" Fill="#E5E5EA" />
+                    <Grid Margin="0,10,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="이미지 분석" FontFamily="Segoe UI" FontSize="13" Foreground="#1C1C1E" />
+                            <TextBlock Text="행사 포스터 이미지 파일 이름 자동 변경" FontFamily="Segoe UI" FontSize="11" Foreground="#8E8E93" />
+                        </StackPanel>
+                        <ToggleButton x:Name="ImageToggle" Grid.Column="1" Style="{StaticResource ToggleStyle}"
+                                      VerticalAlignment="Center" Click="Target_Changed" />
+                    </Grid>
+                    <TextBlock x:Name="BothOffWarning"
+                               Text="⚠️ 둘 다 꺼져 있으면 아무 파일도 처리되지 않습니다."
+                               FontFamily="Segoe UI" FontSize="11" Foreground="#FF9500"
+                               Visibility="Collapsed" Margin="0,0,0,8" />
+                </StackPanel>
+            </Border>
+
+            <!-- Naming Templates -->
+            <TextBlock Text="파일 이름 규칙" FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold"
+                       Foreground="#8E8E93" Margin="4,8,0,6" />
+            <Border Background="White" CornerRadius="10" Padding="14,12" Margin="0,0,0,8">
+                <StackPanel>
+                    <TextBlock Text="논문 PDF" FontFamily="Segoe UI" FontSize="12"
+                               Foreground="#8E8E93" Margin="0,0,0,4" />
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="ArticleTemplateBox" Style="{StaticResource InputBox}"
+                                 Margin="0,0,8,0" />
+                        <Button Grid.Column="1" Style="{StaticResource FlatButton}" Content="초기화"
+                                FontSize="12" Padding="10,6" Click="ResetArticle_Click" />
+                    </Grid>
+
+                    <Rectangle Height="1" Fill="#E5E5EA" Margin="0,0,0,12" />
+
+                    <TextBlock Text="포스터 이미지" FontFamily="Segoe UI" FontSize="12"
+                               Foreground="#8E8E93" Margin="0,0,0,4" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="PosterTemplateBox" Style="{StaticResource InputBox}"
+                                 Margin="0,0,8,0" />
+                        <Button Grid.Column="1" Style="{StaticResource FlatButton}" Content="초기화"
+                                FontSize="12" Padding="10,6" Click="ResetPoster_Click" />
+                    </Grid>
+
+                    <TextBlock Margin="0,10,0,0" FontFamily="Segoe UI" FontSize="11" Foreground="#8E8E93"
+                               Text="{}{name} 저자명  {year} 발행연도  {title} 제목  {when: YYMMDD} 날짜" />
+                    <Button Style="{StaticResource PrimaryButton}" Content="템플릿 저장"
+                            Padding="14,7" Margin="0,10,0,0" HorizontalAlignment="Right"
+                            Click="SaveTemplates_Click" />
+                </StackPanel>
+            </Border>
+
+            <!-- Log Settings -->
+            <TextBlock Text="로그" FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold"
+                       Foreground="#8E8E93" Margin="4,8,0,6" />
+            <Border Background="White" CornerRadius="10" Padding="14,12" Margin="0,0,0,8">
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="최대 보관 건수" FontFamily="Segoe UI" FontSize="13"
+                                   Foreground="#1C1C1E" VerticalAlignment="Center" />
+                        <ComboBox x:Name="MaxLogCombo" Grid.Column="1" Width="90"
+                                  FontFamily="Segoe UI" FontSize="13"
+                                  SelectionChanged="MaxLogCombo_Changed">
+                            <ComboBoxItem Content="100" Tag="100" />
+                            <ComboBoxItem Content="250" Tag="250" />
+                            <ComboBoxItem Content="500" Tag="500" />
+                            <ComboBoxItem Content="1000" Tag="1000" />
+                        </ComboBox>
+                    </Grid>
+                    <Button x:Name="ClearLogBtn" Style="{StaticResource FlatButton}"
+                            Content="로그 초기화" Foreground="#FF3B30"
+                            HorizontalAlignment="Right" Padding="10,6"
+                            Click="ClearLog_Click" />
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</Window>
