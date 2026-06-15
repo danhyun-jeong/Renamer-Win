@@ -10,6 +10,10 @@ obj/
 # 앱 데이터 (런타임 생성)
 *.log
 
+# Installer build output
+Renamer_Setup.exe
+Renamer.zip
+
 # OS
 Thumbs.db
 desktop.ini
